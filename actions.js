@@ -4,8 +4,8 @@ module.exports = function (RED) {
     RED.nodes.createNode(this, config);
 
     this.name = config.name;
-    this.inserver = config.server || (globalkeys && globalkeys.server) || "imap.gmail.com";
-    this.inport = config.port || (globalkeys && globalkeys.port) || "993";
+    this.inserver = config.server || "imap.gmail.com";
+    this.inport = config.port || "993";
     this.box = config.box || "INBOX";
     this.outbox = config.outbox || "Processed";
     this.tag = config.tag || "";
@@ -17,22 +17,12 @@ module.exports = function (RED) {
     if (this.credentials && this.credentials.hasOwnProperty("userid")) {
       this.userid = this.credentials.userid;
     } else {
-      if (globalkeys) {
-        this.userid = globalkeys.user;
-        flag = true;
-      } else {
-        this.error("No userid specified.");
-      }
+      this.error("No userid specified.");
     }
     if (this.credentials && this.credentials.hasOwnProperty("password")) {
       this.password = this.credentials.password;
     } else {
-      if (globalkeys) {
-        this.password = globalkeys.pass;
-        flag = true;
-      } else {
-        this.error("No password specified.");
-      }
+      this.error("No password specified.");
     }
     if (flag) {
       RED.nodes.addCredentials(n.id, {
@@ -126,14 +116,14 @@ module.exports = function (RED) {
                 var email = results[0];
                 var id = email.attributes.uid;
                 var tag = node.tag;
-                if ( msg.email != null && msg.email.label ) { 
+                if (msg.email != null && msg.email.label) {
                   tag = msg.email.label;
                 }
                 var folder = node.outbox;
-                if ( msg.email != null && msg.email.folder ) { 
+                if (msg.email != null && msg.email.folder) {
                   folder = msg.email.folder;
                 }
-                
+
                 addLabel(connection, id, tag).then(function () {
                   // success
                   moveMessage(connection, id, folder).then(function () {
