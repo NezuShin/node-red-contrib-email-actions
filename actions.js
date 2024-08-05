@@ -95,11 +95,11 @@ module.exports = function (RED) {
           });
           connection.openBox(node.box).then(function (error) {
             var searchCriteria = [
-              ['HEADER', 'message-id', msg.header["message-id"]]
+              ['SUBJECT',  msg.header.subject]
             ];
             var fetchOptions = {
               bodies: ['HEADER', 'TEXT'],
-              markSeen: false
+              markSeen: true
             };
             node.status({
               fill: "green",
